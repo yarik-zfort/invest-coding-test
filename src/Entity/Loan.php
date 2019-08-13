@@ -20,10 +20,16 @@ class Loan
     private $endDate;
 
     /**
-     * @var \SplObjectStorage
+     * @var Tranche []
      */
     public $tranches;
 
+    /**
+     * Loan constructor.
+     * @param string $startDate
+     * @param string $endDate
+     * @throws \Exception
+     */
     public function __construct(string $startDate, string $endDate)
     {
         DateValidator::validateDateFormat(
@@ -36,16 +42,16 @@ class Loan
             'Y-m-d',
             'End loan date'
         );
-        $start = new \DateTimeImmutable($startDate);
-        $end = new \DateTimeImmutable($endDate);
-        if ($start > $end) {
-            throw new \Exception('Start date must be earlier than end date');
-        }
-        $this->startDate = $start;
-        $this->endDate = $end;
+        DateValidator::loanStartDateValidate($startDate, $endDate);
+        $this->startDate = new \DateTimeImmutable($startDate);
+        $this->endDate = new \DateTimeImmutable($endDate);
         $this->tranches = new \SplObjectStorage();
     }
 
+    /**
+     * @return bool
+     * @throws \Exception
+     */
     public function isOpen(): bool
     {
         $today = new \DateTimeImmutable();
@@ -68,10 +74,54 @@ class Loan
         return $this->endDate;
     }
 
+    /**
+     * @param Tranche $tranche
+     */
     public function addTranche(Tranche $tranche): void
     {
         if (!$this->tranches->contains($tranche)) {
             $this->tranches->attach($tranche);
         }
+    }
+
+    /**
+     * @param string $date
+     * @return array
+     * @throws \Exception
+     */
+    public function interestMonthCalculation(string $date): array
+    {
+        DateValidator::validateDateFormat($date, 'Y-m-d');
+        $interestDate = new \DateTimeImmutable($date);
+        $firstDayOfMonth = $interestDate->modify('first day of previous month');
+        $lastDayOfMonth = $interestDate->modify('last day of previous month');
+        $lastDayOfMonth = $lastDayOfMonth->setTime(23, 59, 59);
+        $countDaysInMonth = (int)$lastDayOfMonth->format('d');
+        $result = [];
+        foreach ($this->tranches as $tranche) {
+            $transactions = $tranche->getTransactions();
+            if ($transactions->count()) {
+                foreach ($transactions as $transaction) {
+                    $transactionDate = $transaction->getDate();
+                    if ($transactionDate >= $firstDayOfMonth && $transactionDate <= $lastDayOfMonth) {
+                        $amount = $transaction->getAmount();
+                        $monthlyRate = $tranche->getMonthlyRate();
+                        $allMonthInterest = ($amount / 100) * $monthlyRate;
+                        $interestPerDay = $allMonthInterest / $countDaysInMonth;
+                        $daysDiff = $lastDayOfMonth->diff($transactionDate);
+                        $daysDiff = $daysDiff->days + 1;
+                        $daysDiff = $countDaysInMonth - $daysDiff;
+                        $interest = round($allMonthInterest - ($daysDiff * $interestPerDay), 2);
+                        $user = $transaction->getInvestor();
+                        if (!isset($result[$user->getName()])) {
+                            $result[$user->getName()] = $interest;
+                        } else {
+                            $result[$user->getName()] += $interest;
+                        }
+                    }
+                }
+            }
+        }
+        return $result;
     }
 }

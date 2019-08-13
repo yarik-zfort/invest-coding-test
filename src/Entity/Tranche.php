@@ -47,14 +47,14 @@ class Tranche
 
         $currentAmount = $this->totalAmount + $amount;
         if ($currentAmount > $this->maxAmount) {
-            throw new \Exception('MAX AMOUNT');
+            throw new \Exception('Maximum amount exceeded');
         }
 
         $transaction = new Transaction(
             $investor,
             $this,
             $this->loan,
-            new \DateTimeImmutable(),
+            new \DateTimeImmutable('2019-08-03'),
             $amount
         );
         $this->transactions->attach($transaction);
@@ -65,7 +65,7 @@ class Tranche
     private function isMaxAmountValid(float $maxAmount): bool
     {
         if ($maxAmount < 0) {
-            throw new \LogicException('The amount must be greater than zero');
+            throw new \Exception('The amount must be greater than zero');
         }
         return true;
     }
@@ -73,7 +73,7 @@ class Tranche
     private function isMonthlyRateValid(float $monthlyRate): bool
     {
         if ($monthlyRate < 0) {
-            throw new \LogicException('The monthly rate must be greater than zero');
+            throw new \Exception('The monthly rate must be greater than zero');
         }
         return true;
     }

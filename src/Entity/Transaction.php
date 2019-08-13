@@ -31,6 +31,14 @@ class Transaction
      */
     private $amount;
 
+    /**
+     * Transaction constructor.
+     * @param Investor $investor
+     * @param Tranche $tranche
+     * @param Loan $loan
+     * @param \DateTimeImmutable $date
+     * @param float $amount
+     */
     public function __construct(
         Investor $investor,
         Tranche $tranche,
