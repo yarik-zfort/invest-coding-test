@@ -14,5 +14,9 @@
             "LendInvest\\":        "src/",
             "LendInvest\\Tests\\": "tests/"
         }
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8",
+        "codeception/aspect-mock": "*"
     }
 }
