@@ -1,0 +1,18 @@
+{
+    "name": "zfort/lend-invest",
+    "authors": [
+        {
+            "name": "zfort.test",
+            "email": "test@zfort.com"
+        }
+    ],
+    "require": {
+
+    },
+    "autoload": {
+        "psr-4": {
+            "LendInvest\\":        "src/",
+            "LendInvest\\Tests\\": "tests/"
+        }
+    }
+}
