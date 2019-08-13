@@ -41,7 +41,7 @@ class Tranche
 
     public function investmentProcessing(float $amount, Investor $investor): Transaction
     {
-        if (!$this->loan->isOpen()) {
+        if (!$this->loan->isOpen($this->getCurrentDate())) {
             throw new \Exception('Loan closed');
         }
 
@@ -54,7 +54,7 @@ class Tranche
             $investor,
             $this,
             $this->loan,
-            new \DateTimeImmutable('2019-08-03'),
+            $this->getCurrentDate(),
             $amount
         );
         $this->transactions->attach($transaction);
@@ -108,5 +108,10 @@ class Tranche
     public function getTransactions(): \SplObjectStorage
     {
         return $this->transactions;
+    }
+
+    public function getCurrentDate(): \DateTimeImmutable
+    {
+        return new \DateTimeImmutable();
     }
 }

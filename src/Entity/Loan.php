@@ -49,13 +49,12 @@ class Loan
     }
 
     /**
+     * @param \DateTimeInterface $date
      * @return bool
-     * @throws \Exception
      */
-    public function isOpen(): bool
+    public function isOpen(\DateTimeInterface $date): bool
     {
-        $today = new \DateTimeImmutable();
-        return $this->endDate > $today;
+        return $this->endDate >= $date && $this->startDate <= $date;
     }
 
     /**
