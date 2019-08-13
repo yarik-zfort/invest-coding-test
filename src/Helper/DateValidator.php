@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 namespace LendInvest\Helper;
 
@@ -8,7 +9,7 @@ class DateValidator
         string $date,
         string $format = 'Y-m-d',
         string $propertyName = 'Date'
-    )
+    ): void
     {
         $validateDate = \DateTime::createFromFormat($format, $date);
         if (!($validateDate && $validateDate->format($format) === $date)) {
