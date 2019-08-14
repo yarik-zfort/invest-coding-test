@@ -13,12 +13,18 @@ class Investor
     private $name;
 
     /**
+     * @var Wallet
+     */
+    private $wallet;
+
+    /**
      * Investor constructor.
      * @param string $name
      */
     public function __construct(string $name)
     {
         $this->name = $name;
+        $this->wallet = new Wallet();
     }
 
     /**
@@ -29,7 +35,8 @@ class Investor
      */
     public function invest(Tranche $tranche, $amount): Transaction
     {
-        return $tranche->investmentProcessing($amount, $this);
+        $value = $this->wallet->takeMoney($amount);
+        return $tranche->investmentProcessing($value, $this);
     }
 
     /**
