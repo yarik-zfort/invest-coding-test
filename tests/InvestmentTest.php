@@ -4,7 +4,6 @@ use LendInvest\Entity\Investor;
 use LendInvest\Entity\Loan;
 use LendInvest\Entity\Tranche;
 use LendInvest\Entity\Transaction;
-use AspectMock\Test as test;
 
 class InvestmentTest extends \PHPUnit\Framework\TestCase
 {
@@ -15,7 +14,6 @@ class InvestmentTest extends \PHPUnit\Framework\TestCase
         $tranceB = new Tranche($loan, 1000, 6, 'B');
 
         $investor1 = new Investor('Investor1');
-        //test::double(Tranche::class , ['getCurrentDate' => new DateTimeImmutable('2015-10-03')]);
         $transaction1 = $investor1->invest($tranceA, 1000);
         $this->assertInstanceOf(Transaction::class, $transaction1);
 
