@@ -72,7 +72,8 @@ class Tranche
      */
     public function investmentProcessing(float $amount, Investor $investor): Transaction
     {
-        if (!$this->loan->isOpen($this->getCurrentDate())) {
+        $currentDate = $this->getCurrentDate();
+        if (!$this->loan->isOpen($currentDate)) {
             throw new \Exception('Loan closed');
         }
 
@@ -84,8 +85,8 @@ class Tranche
         $transaction = new Transaction(
             $investor,
             $this,
-            $this->loan,
-            $this->getCurrentDate(),
+            $this->getLoan(),
+            $currentDate,
             $amount
         );
         $this->transactions->attach($transaction);
