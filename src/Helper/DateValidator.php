@@ -22,18 +22,4 @@ class DateValidator
             throw new \Exception("$propertyName must be a valid date in (Y-m-d) format");
         }
     }
-
-    /**
-     * @param string $start
-     * @param string $end
-     * @throws \Exception
-     */
-    public static function loanStartDateValidate(string $start, string $end): void
-    {
-        $start = new \DateTimeImmutable($start);
-        $end = new \DateTimeImmutable($end);
-        if ($start > $end) {
-            throw new \Exception('Start date must be earlier than end date');
-        }
-    }
 }
