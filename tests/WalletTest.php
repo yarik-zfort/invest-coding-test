@@ -1,5 +1,5 @@
 <?php
-
+declare(strict_types=1);
 
 use LendInvest\Entity\Investor;
 use LendInvest\Entity\Loan;

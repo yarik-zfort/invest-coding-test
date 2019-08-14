@@ -1,4 +1,5 @@
 <?php
+declare(strict_types=1);
 
 use LendInvest\Entity\Investor;
 use LendInvest\Entity\Loan;
@@ -34,5 +35,25 @@ class InvestmentTest extends \PHPUnit\Framework\TestCase
         }catch (Exception $e) {
             $this->assertEquals('Maximum amount exceeded', $e->getMessage());
         }
+    }
+
+    public function testNegativeAmount()
+    {
+        $this->expectExceptionMessage('The amount must be greater than zero');
+        $loan = new Loan('2019-08-01', '2019-10-15');
+        $tranceA = new Tranche($loan, 1000, 3, 'A');
+        $tranceB = new Tranche($loan, 1000, 6, 'B');
+        $investor1 = new Investor('Investor1');
+        $transaction1 = $investor1->invest($tranceA, -1000);
+    }
+
+    public function testWrongDate()
+    {
+        $this->expectExceptionMessage('Date must be a valid date in (Y-m-d) format');
+        $loan = new Loan('2019-08-01', '2019-10-15');
+        $tranceA = new Tranche($loan, 1000, 3, 'A');
+        $tranceB = new Tranche($loan, 1000, 6, 'B');
+        $investor1 = new Investor('Investor1');
+        $transaction1 = $investor1->invest($tranceA, 1000, '2011-19-19');
     }
 }
