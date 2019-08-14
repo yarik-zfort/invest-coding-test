@@ -5,6 +5,7 @@ namespace LendInvest\Entity;
 
 
 use LendInvest\Helper\DateValidator;
+use LendInvest\Helper\LoanValidator;
 
 
 class Loan
@@ -42,7 +43,7 @@ class Loan
             'Y-m-d',
             'End loan date'
         );
-        DateValidator::loanStartDateValidate($startDate, $endDate);
+        LoanValidator::periodValidate($startDate, $endDate);
         $this->startDate = new \DateTimeImmutable($startDate);
         $this->endDate = new \DateTimeImmutable($endDate);
         $this->tranches = new \SplObjectStorage();

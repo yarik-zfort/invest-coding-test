@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace LendInvest\Entity;
 
 
+use LendInvest\Helper\AmountValidator;
+
 class Tranche
 {
     /**
@@ -52,10 +54,10 @@ class Tranche
         string $name = ''
     )
     {
-        if ($this->isMaxAmountValid($maxAmount)) {
+        if (AmountValidator::positiveValueValidate($maxAmount, 'The amount')) {
             $this->maxAmount = $maxAmount;
         }
-        if ($this->isMonthlyRateValid($monthlyRate)) {
+        if (AmountValidator::positiveValueValidate($monthlyRate, 'The monthly rate')) {
             $this->monthlyRate = $monthlyRate;
         }
         $this->transactions = new \SplObjectStorage();
@@ -67,12 +69,21 @@ class Tranche
     /**
      * @param float $amount
      * @param Investor $investor
+     * @param string|null $date
      * @return Transaction
      * @throws \Exception
      */
-    public function investmentProcessing(float $amount, Investor $investor): Transaction
+    public function investmentProcessing(
+        float $amount,
+        Investor $investor,
+        string $date = null
+    ): Transaction
     {
-        $currentDate = $this->getCurrentDate();
+        if ($date) {
+            $currentDate = new \DateTimeImmutable($date);
+        } else {
+            $currentDate = new \DateTimeImmutable();
+        }
         if (!$this->loan->isOpen($currentDate)) {
             throw new \Exception('Loan closed');
         }
@@ -92,32 +103,6 @@ class Tranche
         $this->transactions->attach($transaction);
         $this->totalAmount += $amount;
         return $transaction;
-    }
-
-    /**
-     * @param float $maxAmount
-     * @return bool
-     * @throws \Exception
-     */
-    private function isMaxAmountValid(float $maxAmount): bool
-    {
-        if ($maxAmount < 0) {
-            throw new \Exception('The amount must be greater than zero');
-        }
-        return true;
-    }
-
-    /**
-     * @param float $monthlyRate
-     * @return bool
-     * @throws \Exception
-     */
-    private function isMonthlyRateValid(float $monthlyRate): bool
-    {
-        if ($monthlyRate < 0) {
-            throw new \Exception('The monthly rate must be greater than zero');
-        }
-        return true;
     }
 
     /**
@@ -158,14 +143,5 @@ class Tranche
     public function getTransactions(): \SplObjectStorage
     {
         return $this->transactions;
-    }
-
-    /**
-     * @return \DateTimeImmutable
-     * @throws \Exception
-     */
-    public function getCurrentDate(): \DateTimeImmutable
-    {
-        return new \DateTimeImmutable();
     }
 }
