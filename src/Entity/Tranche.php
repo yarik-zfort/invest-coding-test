@@ -79,6 +79,7 @@ class Tranche
         string $date = null
     ): Transaction
     {
+        AmountValidator::positiveValueValidate($amount, 'The amount');
         if ($date) {
             $currentDate = new \DateTimeImmutable($date);
         } else {
